@@ -6,21 +6,33 @@ class AnchorSequenceTracker{
 public:
     AnchorSequenceTracker();
 
-    // TODO: add a service to end the teach step and start the repeat step
+    void discover_tags();
+    bool is_tag_in_current(int* tag);
+    void drop_tag_from_current(int* tag_id);
+    void add_tag_to_sequence(
+        std::vector<float> tag_position, 
+        int tag_id, 
+        int sequence_id
+    );
 
-    std::vector<int> discover_tags();
-    bool is_tag_in_current(int tag);
-    bool drop_tag_from_current(int tag_id);
-    bool add_tag_to_sequence(std::vector<float> tag_position, int tag_id, int sequence_id);
+    void start_repeat_sequence();
     
-    std::vector<float> get_tag_position(int tag_id, int sequence_id);
+    std::vector<float> get_tag_position(
+        int tag_id, int sequence_id
+    );
 
 private:
     ros::NodeHandle nh;
     
+    // Service client for initiating TWR transactions from one
+    // of the tags on the Husky
+    ros::ServiceClient twr_client;
+    
     void load_params();
     
+    int current_sequence_id;
     std::vector<int> anchor_ids;
+    std::vector<int> tag_ids;
     std::vector<int> current_sequence;
 
     // sequence_id -> (tag_position, tag_id)
